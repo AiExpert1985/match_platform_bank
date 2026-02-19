@@ -375,24 +375,39 @@ All sections required. Use “None” if applicable.
 
 ---
 
-
-### Display Task & Options
-
-**Obelisk: Task Ready**
-
-**Full definition:** `/obelisk/workspace/task.md`
-
----
-
-
-## TERMINAL STATE
+## OUTPUT
 
 Output EXACTLY this block. No additions.
 
-``` markdown
+```
+**Obelisk: Task Ready**
+
 **Task frozen:** `/obelisk/workspace/task.md`
 
-**Next steps (user-initiated):**
+Review `task.md` and `plan.md`.  
+If you have corrections, describe them now.  
+Otherwise:
+
 - Execute: `run-task` (use @run-task or /run-task depending on your IDE)
 ```
 
+---
+
+## Post-Freeze Corrections
+
+If the user provides corrections:
+
+1. Classify the correction first:
+   - **Mechanical** — wording or clarification only, no change to scope, intent, constraints, or contract impact
+   - **Substantive** — changes scope, goal, constraints, or contract interactions
+
+2. If Mechanical:
+   - Update `task.md` and/or `plan.md`
+   - Output: `Task updated.`
+   - Repeat TERMINAL STATE
+
+3. If Substantive:
+   - Output: `Correction changes scope or constraints. Restarting discovery.`
+   - Restart from Set 2 using existing task description and previous questions & answers as context
+
+If no corrections → TERMINAL STATE

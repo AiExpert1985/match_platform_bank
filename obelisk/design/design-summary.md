@@ -40,3 +40,16 @@ _(empty — populated after maintenance)_
     - `TransactionRecord` (date, account, amount, source).
     - `ReconciliationResult` (status, bank_record, platform_record).
 - **UX**: Simple, clean table layout.
+
+## 20260219-1803 | Implement Excel Import Service
+
+**Architecture / Design (if applicable):**
+- Introduce an import service boundary responsible for file parsing, header validation, row mapping, and structured import reporting.
+- Keep source column contracts centralized to avoid scattering schema rules.
+
+**Business Logic (if applicable):**
+- Parse account/amount/date from exact headers only; normalize dates to day precision.
+- Ignore non-required columns when required headers are present.
+- Skip malformed rows and surface them in an import report without stopping valid-row ingestion.
+
+---
