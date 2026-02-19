@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:excel/excel.dart';
@@ -120,7 +119,7 @@ class ExcelImportService {
     final amountColumnIndex = headerIndexByName[schema.amountHeader]!;
     final dateColumnIndex = headerIndexByName[schema.dateHeader]!;
 
-    final uniqueRecords = LinkedHashSet<TransactionRecord>();
+    final uniqueRecords = <TransactionRecord>{};
     final issues = <ImportIssue>[];
 
     for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
@@ -245,7 +244,9 @@ class ExcelImportService {
     } else if (value is DoubleCellValue) {
       parsed = value.value;
     } else if (value is TextCellValue) {
-      parsed = double.tryParse(value.value.replaceAll(',', '').trim());
+      parsed = double.tryParse(
+        value.value.toString().replaceAll(',', '').trim(),
+      );
     } else {
       parsed = null;
     }
@@ -271,7 +272,7 @@ class ExcelImportService {
     } else if (value is DoubleCellValue) {
       parsedDate = _excelSerialToDate(value.value);
     } else if (value is TextCellValue) {
-      parsedDate = _parseTextDate(value.value);
+      parsedDate = _parseTextDate(value.value.toString());
     } else {
       parsedDate = null;
     }
@@ -346,7 +347,7 @@ class ExcelImportService {
 
     final String text;
     if (value is TextCellValue) {
-      text = value.value.trim();
+      text = value.value.toString().trim();
     } else if (value is IntCellValue) {
       text = value.value.toString();
     } else if (value is DoubleCellValue) {
