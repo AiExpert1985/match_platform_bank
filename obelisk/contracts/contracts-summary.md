@@ -32,3 +32,12 @@ _(empty — populated after first maintenance)_
 - **Precision**: Monetary comparison uses exact precision (no epsilon).
 - **Safety**: Read-only operation. No editing, deleting, or adding records allowed.
 - **Non-Goal**: Historical tracking or database storage.
+
+## 20260219-2100 | Implement Reconciliation Engine
+
+**Action:** update
+**Change:**
+- "One-to-one matching enforced. A record can match exactly one other record or none." →
+  One-to-one applies **only to full matches**. For partial matches, all ambiguous candidate pairs are surfaced as separate result rows.
+
+---

@@ -389,7 +389,7 @@ Review `task.md` and `plan.md`.
 If you have corrections, describe them now.  
 Otherwise:
 
-- Execute: `run-task` (use @run-task or /run-task depending on your IDE)
+to execute, call the `run-task` prompt
 ```
 
 ---

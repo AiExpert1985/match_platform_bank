@@ -53,3 +53,18 @@ _(empty — populated after maintenance)_
 - Skip malformed rows and surface them in an import report without stopping valid-row ingestion.
 
 ---
+
+## 20260219-2100 | Implement Reconciliation Engine
+
+**Architecture / Design:**
+- New service boundary: `ReconciliationService` under `application/services/`, takes two `List<TransactionRecord>` and returns `ReconciliationReport`.
+- New model: `ReconciliationReport` under `application/models/`, mirrors `ImportReport` pattern with result list and precomputed summary counts.
+- Matching priority: full match phase runs first and claims records; partial match phase operates only on unclaimed records.
+
+**Business Logic:**
+- Full match: identical account + normalized amount + date; one-to-one enforced.
+- Partial match: identical account + normalized amount, different date; all candidate pairs surfaced (no claiming).
+- Unmatched bank: bank record with no full match and no partial match candidates.
+- Unmatched platform: platform record not claimed by full match and not surfaced in any partial match.
+
+---
