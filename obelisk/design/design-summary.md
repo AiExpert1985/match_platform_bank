@@ -17,7 +17,18 @@ _(empty — populated after maintenance)_
 ## Open Design Questions
 _(empty — populated after maintenance)_
 
+
 ## Unprocessed
+
+## 20260219-1341 | Implement Core Data Models
+
+**Architecture / Design (if applicable):**
+- Implements `TransactionRecord` and `ReconciliationResult` as immutable Dart classes with manual `==` and `hashCode` overrides for Set/Map compatibility.
+
+**Business Logic (if applicable):**
+- Enforces 3-decimal precision on amount equality checks.
+
+---
 
 - **Tech Stack**: Flutter for Desktop (Windows).
 - **State Management**: Riverpod 3 (Generator syntax).

@@ -11,7 +11,14 @@ _(empty — populated after first maintenance)_
 ## Non-Goals
 _(empty — populated after first maintenance)_
 
+
 ## Unprocessed
+
+## 20260219-1341 | Implement Core Data Models
+
+- **Precision**: Monetary comparison uses 3-decimal digit precision (represented as double).
+
+---
 
 - **System Identity:** Single-screen desktop application for reconciling Bank vs Platform records.
 - **Core Invariant**: Application is stateless; all data exists in memory only. No persistence between sessions.
