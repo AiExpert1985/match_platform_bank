@@ -155,7 +155,7 @@ If one option is clearly wrong, state the correct choice positively.
 
 ---
 
-### Set 1: Understanding (MANDATORY)
+### Clarification Questions (MANDATORY)
 
 Always ask at least one clarification question.
 
@@ -164,19 +164,19 @@ Always ask at least one clarification question.
 - Scope boundaries (what's in/out)
 - Key constraints or dependencies (including required or preferred external libraries, if any)
 
-**After Set 1:**
+**After Clarification Questions:**
 > "Understanding complete."
 
 → If no clarification gaps remain AND no contract require user input:
    - State: "No further questions are needed."
    - Proceed to Task Freeze
 
-→ Otherwise: Continue to Set 2
+→ Otherwise: Continue to Refinement Questions
 
 
 ---
 
-### Set 2: Refinement (If Needed)
+### Refinement Questions (If Needed)
 
 Resolve remaining issues in organized groups. Each group may be skipped if no issues were detected.
 
@@ -380,7 +380,7 @@ All sections required. Use “None” if applicable.
 
 Output EXACTLY this block. No additions.
 
-```
+
 **Obelisk: Task Ready**
 
 **Task frozen:** `/obelisk/workspace/task.md`
@@ -389,8 +389,7 @@ Review `task.md` and `plan.md`.
 If you have corrections, describe them now.  
 Otherwise:
 
-to execute, call the `run-task` prompt
-```
+to implement the task, call the `run-task` prompt
 
 ---
 
@@ -409,6 +408,6 @@ If the user provides corrections:
 
 3. If Substantive:
    - Output: `Correction changes scope or constraints. Restarting discovery.`
-   - Restart from Set 2 using existing task description and previous questions & answers as context
+   - Restart from ## Refinement Questions using existing task description and previous questions & answers as context
 
 If no corrections → TERMINAL STATE

@@ -68,3 +68,12 @@ _(empty — populated after maintenance)_
 - Unmatched platform: platform record not claimed by full match and not surfaced in any partial match.
 
 ---
+
+## 20260219-2300 | Build Full Presentation Layer (UI + State)
+
+**Architecture / Design:**
+- New `presentation/` sublayer under `lib/features/transactions/` with `screens/`, `widgets/`, and `providers/` subdirectories.
+- Single `AppNotifier` (Riverpod 3 `@riverpod` class) owns all UI state: bank import, platform import, and reconciliation — keeping coupled state co-located.
+- Sealed state classes (`ImportState`, `ReconciliationState`) model each stage (idle / loading / success / failure).
+
+---
