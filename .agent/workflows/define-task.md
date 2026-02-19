@@ -3,6 +3,7 @@ description: Creates a new Obelisk task
 ---
 ## Required Files
 
+Read below files:
 - `/obelisk/contracts/contracts-summary.md`
 - `/obelisk/design/design-summary.md`
 - `/obelisk/guidelines/ai-engineering.md`
@@ -14,16 +15,12 @@ description: Creates a new Obelisk task
 
 ---
 
-### Clean Workspace
 
-Delete all files in `/obelisk/workspace/` before proceeding.
-
----
 ## EXECUTION GUARD (CRITICAL)
 
 Task Discovery defines intent.
 
-You MUST NOT plan, implement, or modify code during this phase.  
+You MUST NOT implement, or modify code during this phase.  
 If execution is triggered at any point → **STOP immediately**.
 
 ---
@@ -236,6 +233,11 @@ Add? [yes/no]
 ## TASK FREEZE
 
 
+### Clean Workspace
+
+Delete all files in `/obelisk/workspace/` before proceeding.
+
+---
 ### task.md`
 
 Write to `/obelisk/workspace/task.md`:
