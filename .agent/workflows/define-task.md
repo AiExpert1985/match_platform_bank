@@ -3,7 +3,6 @@ description: Creates a new Obelisk task
 ---
 ## Required Files
 
-Read below files:
 - `/obelisk/contracts/contracts-summary.md`
 - `/obelisk/design/design-summary.md`
 - `/obelisk/guidelines/ai-engineering.md`
