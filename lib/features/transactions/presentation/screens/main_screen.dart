@@ -45,7 +45,7 @@ class MainScreen extends ConsumerWidget {
                 onPressed: bothImported
                     ? () => ref.read(appProvider.notifier).reconcile()
                     : null,
-                child: const Text('توليد'),
+                child: const Text('انشاء التقرير'),
               ),
               const SizedBox(height: 16),
               // Result zone
@@ -54,7 +54,7 @@ class MainScreen extends ConsumerWidget {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'نظام تدقيق الجباية الالكترونية للوارد اليومي - تنفيذ قسم الاتصالات و التحول الالكتوني في مركز توزيع كهرباء نينوى 2026',
+                  'نظام تدقيق الجباية الالكترونية للوارد اليومي -  تصميم قسم الاتصالات و التحول الالكتوني في توزيع كهرباء مركز نينوى 2026',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 11, color: Colors.grey),
                 ),
