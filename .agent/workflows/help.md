@@ -7,7 +7,7 @@ description: List available commands
 
 - `/init-project` — Initialize a project
 - `/define-task [description]` — Create and execute tasks
-- `/run-task` — Run task from current phase to the end
+- `/implement-task` — Run task from current phase to the end
 - `/ask-project` —  Query project knowledge                
 - `/help` — Show this list
 

@@ -389,7 +389,8 @@ Review `task.md` and `plan.md`.
 If you have corrections, describe them now.  
 Otherwise:
 
-to implement the task, call the `run-task` prompt
+to implement the task, call the `implement-task` prompt
+
 
 ---
 
