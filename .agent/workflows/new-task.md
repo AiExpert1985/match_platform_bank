@@ -31,7 +31,7 @@ If execution is triggered at any point → **STOP immediately**.
 **IF user provided description:**
 
 ```
-/define-task Add image picker to main screen
+/new-task Add image picker to main screen
 ```
 
 - Extract task_description = "Add image picker to main screen"
@@ -40,7 +40,7 @@ If execution is triggered at any point → **STOP immediately**.
 **IF no description:**
 
 ```
-/define-task
+/new-task
 ```
 
 Output exactly:
@@ -165,7 +165,7 @@ Always ask at least one clarification question.
 - Key constraints or dependencies (including required or preferred external libraries, if any)
 
 **After Clarification Questions:**
-> "Understanding complete."
+> "Answers helps model fully understand current task."
 
 → If no clarification gaps remain AND no contract require user input:
    - State: "No further questions are needed."

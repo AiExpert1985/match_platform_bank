@@ -328,12 +328,13 @@ class ExcelImportService {
       return null;
     }
 
-    final monthFirst = _tryBuildDate(year, first, second);
-    if (monthFirst != null) {
-      return monthFirst;
+    // Prefer DD/MM/YYYY (standard Arabic/European format).
+    final dayFirst = _tryBuildDate(year, second, first);
+    if (dayFirst != null) {
+      return dayFirst;
     }
 
-    return _tryBuildDate(year, second, first);
+    return _tryBuildDate(year, first, second);
   }
 
   DateTime? _tryBuildDate(int year, int month, int day) {
