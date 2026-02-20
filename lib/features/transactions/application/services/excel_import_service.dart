@@ -312,9 +312,11 @@ class ExcelImportService {
       return isoParsed;
     }
 
+    // Strip optional time + AM/PM suffix (e.g. "01/02/2026 12:28:02 م" → "01/02/2026").
+    final datePart = trimmed.split(' ').first;
     final slashDateMatch = RegExp(
       r'^(\d{1,2})/(\d{1,2})/(\d{4})$',
-    ).firstMatch(trimmed);
+    ).firstMatch(datePart);
     if (slashDateMatch == null) {
       return null;
     }
