@@ -276,7 +276,18 @@ class ExcelImportService {
     } else if (value is DateTimeCellValue) {
       parsedDate = value.asDateTimeLocal();
     } else if (value is IntCellValue) {
-      parsedDate = _excelSerialToDate(value.value.toDouble());
+      // 8-digit integers are YYYYMMDD (e.g. 20260201), not Excel serials.
+      // Excel serials for any real-world date are at most 5–6 digits.
+      final intVal = value.value;
+      if (intVal >= 10000101 && intVal <= 99991231) {
+        final year = intVal ~/ 10000;
+        final month = (intVal % 10000) ~/ 100;
+        final day = intVal % 100;
+        parsedDate = _tryBuildDate(year, month, day) ??
+            _excelSerialToDate(intVal.toDouble());
+      } else {
+        parsedDate = _excelSerialToDate(intVal.toDouble());
+      }
     } else if (value is DoubleCellValue) {
       parsedDate = _excelSerialToDate(value.value);
     } else if (value is TextCellValue) {
@@ -310,6 +321,17 @@ class ExcelImportService {
     final isoParsed = DateTime.tryParse(trimmed);
     if (isoParsed != null) {
       return isoParsed;
+    }
+
+    // YYYYMMDD compact format (e.g. "20260201").
+    if (trimmed.length == 8 && RegExp(r'^\d{8}$').hasMatch(trimmed)) {
+      final year = int.tryParse(trimmed.substring(0, 4));
+      final month = int.tryParse(trimmed.substring(4, 6));
+      final day = int.tryParse(trimmed.substring(6, 8));
+      if (year != null && month != null && day != null) {
+        final compact = _tryBuildDate(year, month, day);
+        if (compact != null) return compact;
+      }
     }
 
     // Strip optional time + AM/PM suffix (e.g. "01/02/2026 12:28:02 م" → "01/02/2026").

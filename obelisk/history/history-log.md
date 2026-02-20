@@ -38,3 +38,7 @@
 
 ---
 
+## 20260220-2000 | Fix Bank Date Parsing for YYYYMMDD Integer Cells | HOTFIX
+
+---
+
