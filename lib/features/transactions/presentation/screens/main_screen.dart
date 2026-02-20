@@ -50,6 +50,15 @@ class MainScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               // Result zone
               const Expanded(child: ResultsTable()),
+              // Footer
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  'نظام تدقيق الجباية الالكترونية للوارد اليومي - تنفيذ قسم الاتصالات و التحول الالكتوني في مركز توزيع كهرباء نينوى 2026',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, color: Colors.grey),
+                ),
+              ),
             ],
           ),
         ),

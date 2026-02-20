@@ -41,3 +41,15 @@ _(empty — populated after first maintenance)_
   One-to-one applies **only to full matches**. For partial matches, all ambiguous candidate pairs are surfaced as separate result rows.
 
 ---
+
+## 20260220-0000 | Expand Matching Logic, Add Column Filters, and UI Polish
+
+**Action:** update
+**Change:**
+- "Matching Types: 2. Partial Match: Identical Account and Amount, different Date." →
+  Remove "Partial Match" and replace with three subcategories:
+  2. **Different Date**: Identical Account and Amount, different Date.
+  3. **Different Amount**: Identical Account and Date, different Amount.
+  4. **Different Date and Amount**: Identical Account only (Amount and Date both differ).
+
+---

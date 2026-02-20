@@ -77,3 +77,19 @@ _(empty — populated after maintenance)_
 - Sealed state classes (`ImportState`, `ReconciliationState`) model each stage (idle / loading / success / failure).
 
 ---
+
+## 20260220-0000 | Expand Matching Logic, Add Column Filters, and UI Polish
+
+**Architecture / Design:**
+- `ReconciliationStatus` enum gains `differentDate`, `differentAmount`, `differentDateAndAmount`; `partialMatch` removed.
+- Matching phases: full match phase unchanged (claims records); non-full phases now run a single account-key loop categorising pairs by `sameAmount`/`sameDate` flags — no claiming, all pairs surfaced.
+- `ResultsTable` rebuilt as `StatefulWidget` owning per-column filter state; filter row + header row sit above `Expanded(ListView.builder)` in the same `Column` for sticky-header behaviour without external packages; `LayoutBuilder` centres the fixed-width table on wide screens.
+
+**Business Logic:**
+- Different Date: account + normalized amount match, date differs.
+- Different Amount: account + date match, normalized amount differs.
+- Different Date and Amount: account matches only (both amount and date differ).
+- Unmatched bank: bank record with no account match in unclaimed platform records.
+- Unmatched platform: unclaimed platform record not surfaced in any non-full pair.
+
+---

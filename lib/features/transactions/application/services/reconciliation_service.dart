@@ -8,46 +8,60 @@ class ReconciliationService {
     required List<TransactionRecord> platformRecords,
   }) {
     final results = <ReconciliationResult>[];
-    final claimedPlatformRecords = <TransactionRecord>{};
-    final unmatchedBankRecords = <TransactionRecord>[];
+    final claimedBank = <TransactionRecord>{};
+    final claimedPlatform = <TransactionRecord>{};
 
     // Phase 1: Full matches — one-to-one enforced.
-    final platformByFullKey = _groupByFullKey(platformRecords);
+    final platformByFullKey = _groupByKey(platformRecords, _fullKey);
     for (final bank in bankRecords) {
       final candidates = platformByFullKey[_fullKey(bank)];
       if (candidates != null && candidates.isNotEmpty) {
         final platform = candidates.removeAt(0);
-        claimedPlatformRecords.add(platform);
+        claimedBank.add(bank);
+        claimedPlatform.add(platform);
         results.add(ReconciliationResult(
           status: ReconciliationStatus.fullMatch,
           bankRecord: bank,
           platformRecord: platform,
         ));
-      } else {
-        unmatchedBankRecords.add(bank);
       }
     }
 
-    // Phase 2 & 3: Partial matches and unmatched bank records.
-    final platformByPartialKey =
-        _groupByPartialKey(platformRecords, claimedPlatformRecords);
-    final surfacedPlatformRecords = <TransactionRecord>{};
+    final unclaimedBank =
+        bankRecords.where((b) => !claimedBank.contains(b)).toList();
+    final unclaimedPlatform =
+        platformRecords.where((p) => !claimedPlatform.contains(p)).toList();
 
-    for (final bank in unmatchedBankRecords) {
-      final candidates = (platformByPartialKey[_partialKey(bank)] ?? [])
-          .where((p) => p.date != bank.date)
-          .toList();
+    // Phases 2–4: Account-based matching with subcategories.
+    // No claiming: all candidate pairs are surfaced.
+    final platformByAccount = _groupByKey(unclaimedPlatform, (r) => r.account);
+    final surfacedPlatform = <TransactionRecord>{};
 
-      if (candidates.isNotEmpty) {
-        for (final platform in candidates) {
-          surfacedPlatformRecords.add(platform);
-          results.add(ReconciliationResult(
-            status: ReconciliationStatus.partialMatch,
-            bankRecord: bank,
-            platformRecord: platform,
-          ));
-        }
-      } else {
+    for (final bank in unclaimedBank) {
+      final candidates = platformByAccount[bank.account] ?? [];
+      var hasCandidates = false;
+
+      for (final platform in candidates) {
+        final sameAmount =
+            _normalizeAmount(bank.amount) == _normalizeAmount(platform.amount);
+        final sameDate = bank.date == platform.date;
+
+        final status = sameAmount
+            ? ReconciliationStatus.differentDate
+            : sameDate
+                ? ReconciliationStatus.differentAmount
+                : ReconciliationStatus.differentDateAndAmount;
+
+        hasCandidates = true;
+        surfacedPlatform.add(platform);
+        results.add(ReconciliationResult(
+          status: status,
+          bankRecord: bank,
+          platformRecord: platform,
+        ));
+      }
+
+      if (!hasCandidates) {
         results.add(ReconciliationResult(
           status: ReconciliationStatus.unmatched,
           bankRecord: bank,
@@ -56,10 +70,9 @@ class ReconciliationService {
       }
     }
 
-    // Phase 4: Unmatched platform records.
-    for (final platform in platformRecords) {
-      if (!claimedPlatformRecords.contains(platform) &&
-          !surfacedPlatformRecords.contains(platform)) {
+    // Phase 5: Unmatched platform records.
+    for (final platform in unclaimedPlatform) {
+      if (!surfacedPlatform.contains(platform)) {
         results.add(ReconciliationResult(
           status: ReconciliationStatus.unmatched,
           bankRecord: null,
@@ -71,34 +84,19 @@ class ReconciliationService {
     return ReconciliationReport(results: results);
   }
 
-  Map<String, List<TransactionRecord>> _groupByFullKey(
+  Map<String, List<TransactionRecord>> _groupByKey(
     List<TransactionRecord> records,
+    String Function(TransactionRecord) keyFn,
   ) {
     final map = <String, List<TransactionRecord>>{};
     for (final record in records) {
-      (map[_fullKey(record)] ??= []).add(record);
-    }
-    return map;
-  }
-
-  Map<String, List<TransactionRecord>> _groupByPartialKey(
-    List<TransactionRecord> records,
-    Set<TransactionRecord> claimed,
-  ) {
-    final map = <String, List<TransactionRecord>>{};
-    for (final record in records) {
-      if (claimed.contains(record)) continue;
-      (map[_partialKey(record)] ??= []).add(record);
+      (map[keyFn(record)] ??= []).add(record);
     }
     return map;
   }
 
   String _fullKey(TransactionRecord record) {
     return '${record.account}|${_normalizeAmount(record.amount)}|${record.date.millisecondsSinceEpoch}';
-  }
-
-  String _partialKey(TransactionRecord record) {
-    return '${record.account}|${_normalizeAmount(record.amount)}';
   }
 
   double _normalizeAmount(double amount) {
