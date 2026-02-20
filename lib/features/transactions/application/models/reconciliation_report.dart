@@ -21,18 +21,9 @@ class ReconciliationReport {
           .where((r) => r.status == ReconciliationStatus.differentDateAndAmount)
           .length;
 
-  int get unmatchedBankCount => results
-      .where(
-        (r) =>
-            r.status == ReconciliationStatus.unmatched && r.bankRecord != null,
-      )
-      .length;
+  int get unmatchedBankCount =>
+      results.where((r) => r.status == ReconciliationStatus.bankOnly).length;
 
-  int get unmatchedPlatformCount => results
-      .where(
-        (r) =>
-            r.status == ReconciliationStatus.unmatched &&
-            r.platformRecord != null,
-      )
-      .length;
+  int get unmatchedPlatformCount =>
+      results.where((r) => r.status == ReconciliationStatus.platformOnly).length;
 }
