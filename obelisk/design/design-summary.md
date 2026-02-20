@@ -106,3 +106,19 @@ _(empty — populated after maintenance)_
 - Platform Only (`platformOnly`): unclaimed platform record not surfaced in any non-full pair.
 
 ---
+
+## 20260220-1700 | Fix Matching Algorithm and Show All Statuses
+
+**Architecture / Design:**
+- `ReconciliationService.reconcile()` rewritten: build `bankAccounts` and `platformAccounts` sets, split bank-only / platform-only by account set membership, then iterate account intersection and emit all bank × platform pairs per account group (cartesian product, no claiming).
+- `_TableState._selectedStatuses` initialises to `Set.of(ReconciliationStatus.values)` (all selected); filter guard simplified to unconditional `contains` check.
+- New number column (`_colNum = 50.0`) prepended to filter row, header row, and data row; `_totalWidth` updated accordingly.
+- `_StatusFilter._options` expanded to include `fullMatch`; "الكل" `CheckboxListTile` removed from dialog; label shows "الكل" when all statuses selected, otherwise count.
+
+**Business Logic:**
+- Full-match records are now visible in the results table by default (sorted first).
+- Bank Only: bank record whose account does not appear in any platform record.
+- Platform Only: platform record whose account does not appear in any bank record.
+- Row numbers (1-based) reflect the currently visible (post-filter) rows and reset on every filter change.
+
+---

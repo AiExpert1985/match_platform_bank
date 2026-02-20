@@ -4,12 +4,13 @@ import 'package:match_platform_bank/features/transactions/domain/reconciliation_
 import 'package:match_platform_bank/features/transactions/presentation/providers/app_notifier.dart';
 import 'package:match_platform_bank/features/transactions/presentation/providers/app_state.dart';
 
+const _colNum = 50.0;
 const _colAccount = 160.0;
 const _colAmount = 120.0;
 const _colDate = 110.0;
 const _colStatus = 200.0;
 const _totalWidth =
-    _colAccount * 2 + _colAmount * 2 + _colDate * 2 + _colStatus;
+    _colNum + _colAccount * 2 + _colAmount * 2 + _colDate * 2 + _colStatus;
 
 class ResultsTable extends ConsumerWidget {
   const ResultsTable({super.key});
@@ -44,7 +45,7 @@ class _TableState extends State<_Table> {
   final _bankAmountCtrl = TextEditingController();
   DateTime? _platformDate;
   DateTime? _bankDate;
-  Set<ReconciliationStatus> _selectedStatuses = {};
+  Set<ReconciliationStatus> _selectedStatuses = Set.of(ReconciliationStatus.values);
   String _platformAmountFilter = '';
   String _bankAmountFilter = '';
 
@@ -58,17 +59,14 @@ class _TableState extends State<_Table> {
   }
 
   List<ReconciliationResult> _sort(List<ReconciliationResult> input) {
-    final rows = input
-        .where((r) => r.status != ReconciliationStatus.fullMatch)
-        .toList()
+    final rows = input.toList()
       ..sort((a, b) => _sortOrder(a).compareTo(_sortOrder(b)));
     return rows;
   }
 
   List<ReconciliationResult> _applyFilters(List<ReconciliationResult> rows) {
     return rows.where((r) {
-      if (_selectedStatuses.isNotEmpty &&
-          !_selectedStatuses.contains(r.status)) {
+      if (!_selectedStatuses.contains(r.status)) {
         return false;
       }
 
@@ -115,30 +113,30 @@ class _TableState extends State<_Table> {
       a.year == b.year && a.month == b.month && a.day == b.day;
 
   int _sortOrder(ReconciliationResult r) => switch (r.status) {
-        ReconciliationStatus.differentDate => 0,
-        ReconciliationStatus.differentAmount => 1,
-        ReconciliationStatus.differentDateAndAmount => 2,
-        ReconciliationStatus.bankOnly => 3,
-        ReconciliationStatus.platformOnly => 4,
-        ReconciliationStatus.fullMatch => 5,
+        ReconciliationStatus.fullMatch => 0,
+        ReconciliationStatus.differentDate => 1,
+        ReconciliationStatus.differentAmount => 2,
+        ReconciliationStatus.differentDateAndAmount => 3,
+        ReconciliationStatus.bankOnly => 4,
+        ReconciliationStatus.platformOnly => 5,
       };
 
   Color? _statusColor(ReconciliationResult r) => switch (r.status) {
+        ReconciliationStatus.fullMatch => Colors.green[700],
         ReconciliationStatus.differentDate => Colors.orange[800],
         ReconciliationStatus.differentAmount => Colors.blue[700],
         ReconciliationStatus.differentDateAndAmount => Colors.deepOrange[700],
         ReconciliationStatus.bankOnly => Colors.red[700],
         ReconciliationStatus.platformOnly => Colors.purple[700],
-        ReconciliationStatus.fullMatch => null,
       };
 
   String _statusLabel(ReconciliationResult r) => switch (r.status) {
+        ReconciliationStatus.fullMatch => 'تطابق كامل',
         ReconciliationStatus.differentDate => 'تاريخ مختلف',
         ReconciliationStatus.differentAmount => 'مبلغ مختلف',
         ReconciliationStatus.differentDateAndAmount => 'تاريخ ومبلغ مختلفان',
         ReconciliationStatus.bankOnly => 'بنك فقط',
         ReconciliationStatus.platformOnly => 'منصة فقط',
-        ReconciliationStatus.fullMatch => '',
       };
 
   String _formatAmount(double amount) {
@@ -210,6 +208,7 @@ class _TableState extends State<_Table> {
       color: Colors.grey.shade100,
       child: Row(
         children: [
+          _filterCell(_colNum, const SizedBox.shrink()),
           _filterCell(
             _colAccount,
             _AccountFilter(
@@ -269,6 +268,7 @@ class _TableState extends State<_Table> {
       color: Colors.grey.shade200,
       child: Row(
         children: [
+          _headerCell(_colNum, '#'),
           _headerCell(_colAccount, 'رقم الحساب\n(المنصة)'),
           _headerCell(_colAmount, 'المبلغ\n(المنصة)'),
           _headerCell(_colDate, 'التاريخ\n(المنصة)'),
@@ -291,6 +291,7 @@ class _TableState extends State<_Table> {
       color: bg,
       child: Row(
         children: [
+          _dataCell(_colNum, '${index + 1}', null),
           _dataCell(_colAccount, p?.account ?? '', color),
           _dataCell(_colAmount, p != null ? _formatAmount(p.amount) : '', color),
           _dataCell(_colDate, p != null ? _formatDate(p.date) : '', color),
@@ -527,6 +528,7 @@ class _StatusFilter extends StatelessWidget {
   });
 
   static final _options = <(ReconciliationStatus, String)>[
+    (ReconciliationStatus.fullMatch, 'تطابق كامل'),
     (ReconciliationStatus.differentDate, 'تاريخ مختلف'),
     (ReconciliationStatus.differentAmount, 'مبلغ مختلف'),
     (ReconciliationStatus.differentDateAndAmount, 'تاريخ ومبلغ مختلفان'),
@@ -536,8 +538,9 @@ class _StatusFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label =
-        selectedStatuses.isEmpty ? 'الكل' : '${selectedStatuses.length} محدد';
+    final label = selectedStatuses.length == ReconciliationStatus.values.length
+        ? 'الكل'
+        : '${selectedStatuses.length} محدد';
 
     return InkWell(
       onTap: () => _showDialog(context),
@@ -569,11 +572,6 @@ class _StatusFilter extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CheckboxListTile(
-                title: const Text('الكل'),
-                value: current.isEmpty,
-                onChanged: (_) => setDialogState(() => current = {}),
-              ),
               ..._options.map((opt) {
                 final (status, label) = opt;
                 return CheckboxListTile(
