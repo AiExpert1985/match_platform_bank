@@ -93,3 +93,16 @@ _(empty — populated after maintenance)_
 - Unmatched platform: unclaimed platform record not surfaced in any non-full pair.
 
 ---
+
+## 20260220-1200 | Fix Status Filter, Filter UX, and Bank-Only Matching Bug
+
+**Architecture / Design (if applicable):**
+- `ReconciliationStatus` enum: `unmatched` removed; `bankOnly` and `platformOnly` added as distinct values.
+- `_parseAccount` in `ExcelImportService`: delegates to `_normalizeAccount` which strips leading zeros from purely-numeric strings, ensuring bank integer cells and platform text cells resolve to the same account key.
+- All filter widgets (`_AccountFilter`, `_AmountFilter`) adopt the same bordered `Container` wrapper as `_DateFilter`/`_StatusFilter` for uniform visual height.
+
+**Business Logic (if applicable):**
+- Bank Only (`bankOnly`): bank record with no account match in unclaimed platform records.
+- Platform Only (`platformOnly`): unclaimed platform record not surfaced in any non-full pair.
+
+---

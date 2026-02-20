@@ -118,8 +118,8 @@ class _TableState extends State<_Table> {
         ReconciliationStatus.differentDate => 0,
         ReconciliationStatus.differentAmount => 1,
         ReconciliationStatus.differentDateAndAmount => 2,
-        ReconciliationStatus.unmatched when r.bankRecord != null => 3,
-        ReconciliationStatus.unmatched => 4,
+        ReconciliationStatus.bankOnly => 3,
+        ReconciliationStatus.platformOnly => 4,
         ReconciliationStatus.fullMatch => 5,
       };
 
@@ -127,9 +127,8 @@ class _TableState extends State<_Table> {
         ReconciliationStatus.differentDate => Colors.orange[800],
         ReconciliationStatus.differentAmount => Colors.blue[700],
         ReconciliationStatus.differentDateAndAmount => Colors.deepOrange[700],
-        ReconciliationStatus.unmatched when r.bankRecord != null =>
-          Colors.red[700],
-        ReconciliationStatus.unmatched => Colors.purple[700],
+        ReconciliationStatus.bankOnly => Colors.red[700],
+        ReconciliationStatus.platformOnly => Colors.purple[700],
         ReconciliationStatus.fullMatch => null,
       };
 
@@ -137,8 +136,8 @@ class _TableState extends State<_Table> {
         ReconciliationStatus.differentDate => 'تاريخ مختلف',
         ReconciliationStatus.differentAmount => 'مبلغ مختلف',
         ReconciliationStatus.differentDateAndAmount => 'تاريخ ومبلغ مختلفان',
-        ReconciliationStatus.unmatched when r.bankRecord != null => 'بنك فقط',
-        ReconciliationStatus.unmatched => 'منصة فقط',
+        ReconciliationStatus.bankOnly => 'بنك فقط',
+        ReconciliationStatus.platformOnly => 'منصة فقط',
         ReconciliationStatus.fullMatch => '',
       };
 
@@ -348,16 +347,42 @@ class _AccountFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onChanged: onChanged,
-      decoration: const InputDecoration(
-        isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-        hintText: 'بحث...',
-        border: OutlineInputBorder(),
-      ),
-      style: const TextStyle(fontSize: 11),
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: controller,
+      builder: (context, value, _) {
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade400),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  onChanged: onChanged,
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: 'بحث...',
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: const TextStyle(fontSize: 11),
+                ),
+              ),
+              if (value.text.isNotEmpty)
+                GestureDetector(
+                  onTap: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                  child: const Icon(Icons.clear, size: 12),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -394,18 +419,44 @@ class _AmountFilterState extends State<_AmountFilter> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: widget.controller,
-      focusNode: _focus,
-      onSubmitted: (v) => widget.onApply(v.trim()),
-      decoration: const InputDecoration(
-        isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-        hintText: 'مبلغ...',
-        border: OutlineInputBorder(),
-      ),
-      style: const TextStyle(fontSize: 11),
-      keyboardType: TextInputType.number,
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: widget.controller,
+      builder: (context, value, _) {
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade400),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: widget.controller,
+                  focusNode: _focus,
+                  onSubmitted: (v) => widget.onApply(v.trim()),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: 'مبلغ...',
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  style: const TextStyle(fontSize: 11),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              if (value.text.isNotEmpty)
+                GestureDetector(
+                  onTap: () {
+                    widget.controller.clear();
+                    widget.onApply('');
+                  },
+                  child: const Icon(Icons.clear, size: 12),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -479,7 +530,8 @@ class _StatusFilter extends StatelessWidget {
     (ReconciliationStatus.differentDate, 'تاريخ مختلف'),
     (ReconciliationStatus.differentAmount, 'مبلغ مختلف'),
     (ReconciliationStatus.differentDateAndAmount, 'تاريخ ومبلغ مختلفان'),
-    (ReconciliationStatus.unmatched, 'غير متطابق'),
+    (ReconciliationStatus.bankOnly, 'بنك فقط'),
+    (ReconciliationStatus.platformOnly, 'منصة فقط'),
   ];
 
   @override
@@ -516,29 +568,29 @@ class _StatusFilter extends StatelessWidget {
           title: const Text('تصفية الحالة'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: _options.map((opt) {
-              final (status, label) = opt;
-              return CheckboxListTile(
-                title: Text(label),
-                value: current.contains(status),
-                onChanged: (v) => setDialogState(() {
-                  if (v == true) {
-                    current.add(status);
-                  } else {
-                    current.remove(status);
-                  }
-                }),
-              );
-            }).toList(),
+            children: [
+              CheckboxListTile(
+                title: const Text('الكل'),
+                value: current.isEmpty,
+                onChanged: (_) => setDialogState(() => current = {}),
+              ),
+              ..._options.map((opt) {
+                final (status, label) = opt;
+                return CheckboxListTile(
+                  title: Text(label),
+                  value: current.contains(status),
+                  onChanged: (v) => setDialogState(() {
+                    if (v == true) {
+                      current.add(status);
+                    } else {
+                      current.remove(status);
+                    }
+                  }),
+                );
+              }),
+            ],
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                onChanged({});
-                Navigator.pop(ctx);
-              },
-              child: const Text('إلغاء الكل'),
-            ),
             TextButton(
               onPressed: () {
                 onChanged(current);

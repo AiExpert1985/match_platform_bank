@@ -5,7 +5,8 @@ enum ReconciliationStatus {
   differentDate,
   differentAmount,
   differentDateAndAmount,
-  unmatched,
+  bankOnly,
+  platformOnly,
 }
 
 class ReconciliationResult {

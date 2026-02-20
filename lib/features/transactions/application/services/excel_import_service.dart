@@ -230,7 +230,15 @@ class ExcelImportService {
     if (raw == null || raw.isEmpty) {
       return null;
     }
-    return raw;
+    return _normalizeAccount(raw);
+  }
+
+  /// Strips leading zeros from purely-numeric account strings so that bank
+  /// integer cells (e.g. 12345) and platform text cells (e.g. "012345") match.
+  String _normalizeAccount(String raw) {
+    if (!RegExp(r'^\d+$').hasMatch(raw)) return raw;
+    final stripped = raw.replaceFirst(RegExp(r'^0+'), '');
+    return stripped.isEmpty ? '0' : stripped;
   }
 
   double? _parseAmount(CellValue? value) {

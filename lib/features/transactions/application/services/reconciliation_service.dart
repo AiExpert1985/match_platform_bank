@@ -63,7 +63,7 @@ class ReconciliationService {
 
       if (!hasCandidates) {
         results.add(ReconciliationResult(
-          status: ReconciliationStatus.unmatched,
+          status: ReconciliationStatus.bankOnly,
           bankRecord: bank,
           platformRecord: null,
         ));
@@ -74,7 +74,7 @@ class ReconciliationService {
     for (final platform in unclaimedPlatform) {
       if (!surfacedPlatform.contains(platform)) {
         results.add(ReconciliationResult(
-          status: ReconciliationStatus.unmatched,
+          status: ReconciliationStatus.platformOnly,
           bankRecord: null,
           platformRecord: platform,
         ));

@@ -18,3 +18,7 @@
 
 ---
 
+## 20260220-1200 | Fix Status Filter, Filter UX, and Bank-Only Matching Bug | APPROVED
+
+---
+
