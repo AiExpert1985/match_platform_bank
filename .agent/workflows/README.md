@@ -107,13 +107,13 @@ It intentionally trades early friction for long-term stability.
 
 ## Commands
 
-| Command | Purpose |
-|----------|----------|
-| `/init-project` | Initialize project structure |
-| `/define-task [description]` | Define task and create execution plan |
-| `/run-task` | Implement, review, archive |
-| `/ask-project` | Query project knowledge |
-| `/help` | Show available commands |
+| Command                   | Purpose                            |
+| ------------------------- | ---------------------------------- |
+| `/init-project`           | Initialize project structure       |
+| `/new-task [description]` | create new task and execution plan |
+| `/implement-task`         | Implement, review, archive         |
+| `/ask-project`            | Query project knowledge            |
+| `/help`                   | Show available commands            |
 
 ---
 
@@ -128,17 +128,17 @@ It intentionally trades early friction for long-term stability.
 
 ```
 
-2. Define a task:
+2. create a task:
 ```
 
-/define-task Add user authentication
+/new-task Add user authentication
 
 ```
 
 3. Execute:
 ```
 
-/run-task
+/implement-task
 
 ```
 
@@ -168,7 +168,7 @@ Outcome: durable foundation independent of chat sessions.
 ### Task Cycle (Repeats)
 ```
 
-define (task + plan) → implement → review → archive
+create new (task + plan) → implement → review → archive
 
 ```
 
@@ -191,11 +191,11 @@ Hotfixes bypass planning but are always recorded in history.
 
 ### Task Execution
 
-#### `/define-task`
+#### `/new-task`
 Discover intent, freeze task, and create execution plan.  
 Prevents guessing, scope drift, and accidental architecture.
 
-#### `/run-task`
+#### `/implement-task`
 Implement → review → archive.
 
 - Implementation follows the frozen plan
