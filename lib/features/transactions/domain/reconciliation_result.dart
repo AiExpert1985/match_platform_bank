@@ -1,6 +1,13 @@
 import 'package:match_platform_bank/features/transactions/domain/transaction_record.dart';
 
-enum ReconciliationStatus { fullMatch, partialMatch, unmatched }
+enum ReconciliationStatus {
+  fullMatch,
+  differentDate,
+  differentAmount,
+  differentDateAndAmount,
+  bankOnly,
+  platformOnly,
+}
 
 class ReconciliationResult {
   final ReconciliationStatus status;
