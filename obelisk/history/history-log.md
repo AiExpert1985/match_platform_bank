@@ -42,3 +42,9 @@
 
 ---
 
+## 20260222-1230 | Explain Pylance lldb False Positive | HOTFIX
+
+Contracts scanned: none relevant (iOS tooling file, outside app domain)
+
+---
+
